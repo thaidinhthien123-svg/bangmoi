@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delta Robot Remote</title>
+  <style>
+    body { font-family: Arial; background: #1e1e1e; color: #fff; text-align: center; padding: 20px; margin: 0; }
+    h1 { color: #00ff88; margin-bottom: 10px; }
+    .count { font-size: 26px; margin: 20px 0; background: #333; padding: 18px; border-radius: 12px; }
+    button { width: 90%; max-width: 400px; padding: 18px; margin: 12px 0; font-size: 22px; border-radius: 12px; border: none; font-weight: bold; }
+    .start { background: #00cc00; }
+    .stop  { background: #cc0000; }
+    .home  { background: #0066ff; }
+  </style>
+</head>
+<body>
+  <h1>🔧 DELTA ROBOT CONTROL</h1>
+  <div class="count" id="counts">🔴 Red: 0 | ⚫ Black: 0 | ⚪ Silver: 0</div>
+
+  <button class="start" onclick="sendCommand('start')">▶ START HỆ THỐNG</button>
+  <button class="stop" onclick="sendCommand('stop')">⏹ STOP HỆ THỐNG</button>
+  <button class="home" onclick="sendCommand('home')">🏠 HOME ROBOT</button>
+
+  <p style="margin-top:30px; color:#aaa;">Trạng thái: <span id="status">Sẵn sàng</span></p>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBfeyfNlvbhLnTciiCYIV6uTIEhzrPCRug",
+      authDomain: "xulyanhxin.firebaseapp.com",
+      databaseURL: "https://xulyanhxin-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "xulyanhxin"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    function sendCommand(cmd) {
+      db.ref('commands/action').set(cmd);
+      document.getElementById('status').innerHTML = `Đã gửi lệnh: <b>${cmd.toUpperCase()}</b>`;
+      setTimeout(() => document.getElementById('status').innerHTML = 'Sẵn sàng', 2500);
+    }
+
+    // Hiển thị số lượng realtime
+    db.ref('status/counts').on('value', (snap) => {
+      const c = snap.val() || {red:0, black:0, silver:0};
+      document.getElementById('counts').innerHTML = 
+        `🔴 Red: ${c.red} | ⚫ Black: ${c.black} | ⚪ Silver: ${c.silver}`;
+    });
+  </script>
+</body>
+</html>
