@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Robot Control PRO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      background: #0f172a;
+      color: white;
+      font-family: Arial;
+      text-align: center;
+    }
+
+    h1 {
+      margin-top: 20px;
+    }
+
+    .card {
+      background: #1e293b;
+      margin: 15px;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    }
+
+    button {
+      width: 80%;
+      height: 60px;
+      font-size: 20px;
+      margin: 10px;
+      border: none;
+      border-radius: 12px;
+      color: white;
+    }
+
+    .start { background: #22c55e; }
+    .stop { background: #ef4444; }
+    .home { background: #3b82f6; }
+
+    .status {
+      font-size: 22px;
+      margin: 10px;
+    }
+
+    .count {
+      font-size: 40px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>🤖 Robot Control PRO</h1>
+
+<div class="card">
+  <div class="status">Status: <span id="status">---</span></div>
+  <div class="count" id="count">0</div>
+  <div>Sản phẩm</div>
+</div>
+
+<div class="card">
+  <button class="start" onclick="sendCmd('start')">START</button>
+  <button class="stop" onclick="sendCmd('stop')">STOP</button>
+  <button class="home" onclick="sendCmd('home')">HOME</button>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  databaseURL: "https://your-project.firebaseio.com"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+// gửi lệnh
+function sendCmd(cmd) {
+  firebase.database().ref("/control").set(cmd);
+}
+
+// realtime status
+firebase.database().ref("/status").on("value", snap => {
+  document.getElementById("status").innerText = snap.val();
+});
+
+// realtime count
+firebase.database().ref("/count").on("value", snap => {
+  document.getElementById("count").innerText = snap.val();
+});
+</script>
+
+</body>
+</html>
